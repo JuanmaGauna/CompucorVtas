@@ -1,19 +1,34 @@
+using CompucorVtas.Data;
+using Microsoft.EntityFrameworkCore;
+using FluentValidation.AspNetCore;
+using CompucorVtas.Validators;
+using FluentValidation;
+
+
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Configurar Entity Framework + SQLite
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite("Data Source=compucorvtas.db"));
+
+// Configurar Swagger y otros servicios
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddControllers();
+builder.Services.AddValidatorsFromAssemblyContaining<ProductoValidator>();
+
+
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Middleware de desarrollo y Swagger
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+// Esta es la línea que genera el warning:
 app.UseHttpsRedirection();
 
 var summaries = new[]
@@ -35,6 +50,7 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast")
 .WithOpenApi();
+app.MapControllers();
 
 app.Run();
 
