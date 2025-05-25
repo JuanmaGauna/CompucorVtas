@@ -10,14 +10,34 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdmiVentas.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250524183349_AddClientes")]
-    partial class AddClientes
+    [Migration("20250525174344_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.5");
+
+            modelBuilder.Entity("CompucorVtas.Models.Categoria", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Descripcion")
+                        .HasMaxLength(250)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categorias");
+                });
 
             modelBuilder.Entity("CompucorVtas.Models.Cliente", b =>
                 {
@@ -52,6 +72,9 @@ namespace AdmiVentas.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("CategoriaId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasMaxLength(250)
@@ -70,7 +93,25 @@ namespace AdmiVentas.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CategoriaId");
+
                     b.ToTable("Productos");
+                });
+
+            modelBuilder.Entity("CompucorVtas.Models.Producto", b =>
+                {
+                    b.HasOne("CompucorVtas.Models.Categoria", "Categoria")
+                        .WithMany("Productos")
+                        .HasForeignKey("CategoriaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Categoria");
+                });
+
+            modelBuilder.Entity("CompucorVtas.Models.Categoria", b =>
+                {
+                    b.Navigation("Productos");
                 });
 #pragma warning restore 612, 618
         }

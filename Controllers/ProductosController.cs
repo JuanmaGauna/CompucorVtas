@@ -20,7 +20,9 @@ namespace CompucorVtas.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Producto>>> Get()
         {
-            return await _context.Productos.ToListAsync();
+            return await _context.Productos
+            .Include(p => p.Categoria)
+            .ToListAsync();
         }
 
         // GET: api/productos/5
@@ -31,6 +33,19 @@ namespace CompucorVtas.Controllers
             if (producto == null) return NotFound();
             return producto;
         }
+[HttpGet("categoria/{categoriaId}")]
+public async Task<ActionResult<IEnumerable<Producto>>> GetByCategoria(int categoriaId)
+{
+    var productos = await _context.Productos
+        .Where(p => p.CategoriaId == categoriaId)
+        .Include(p => p.Categoria)
+        .ToListAsync();
+
+    if (productos == null || productos.Count == 0)
+        return NotFound($"No hay productos para la categoría {categoriaId}");
+
+    return productos;
+}
 
         // POST: api/productos
         [HttpPost]
