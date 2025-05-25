@@ -3,8 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using FluentValidation.AspNetCore;
 using CompucorVtas.Validators;
 using FluentValidation;
-
-
+using CompucorVtas.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +20,8 @@ builder.Services.AddValidatorsFromAssemblyContaining<ProductoValidator>();
 
 
 var app = builder.Build();
+app.UseErrorHandler(); // 👈 Esto agrega el middleware
+
 
 // Middleware de desarrollo y Swagger
 if (app.Environment.IsDevelopment())
