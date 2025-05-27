@@ -4,6 +4,8 @@ using FluentValidation.AspNetCore;
 using CompucorVtas.Validators;
 using FluentValidation;
 using CompucorVtas.Middlewares;
+using Swashbuckle.AspNetCore.Annotations;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,51 +13,46 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=compucorvtas.db"));
 
-// Configurar Swagger y otros servicios
+// Configurar Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Compucor Ventas API",
+        Version = "v1",
+        Description = "API REST para la gestión de productos, clientes y categorías",
+        Contact = new OpenApiContact
+        {
+            Name = "Juan Manuel Gauna",
+            Url = new Uri("https://github.com/juanmagauna/CompucorVtas")
+        }
+    });
+
+    c.EnableAnnotations();
+});
+
 builder.Services.AddControllers();
 builder.Services.AddValidatorsFromAssemblyContaining<ProductoValidator>();
 
-
-
 var app = builder.Build();
-app.UseErrorHandler(); // 👈 Esto agrega el middleware
 
+// Middleware de manejo de errores global
+app.UseErrorHandler();
 
-// Middleware de desarrollo y Swagger
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+
+    // 🔁 Cambiamos la ruta para evitar el cache roto de Swagger UI
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Compucor Ventas API v1");
+        c.RoutePrefix = "swagger-ui"; // Swagger se abrirá en /swagger-ui
+    });
 }
-// Esta es la línea que genera el warning:
+
 app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
 app.MapControllers();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

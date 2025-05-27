@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CompucorVtas.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     public class CategoriasController : ControllerBase
     {
         private readonly AppDbContext _context;

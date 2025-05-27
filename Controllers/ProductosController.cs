@@ -2,11 +2,12 @@ using Microsoft.AspNetCore.Mvc;
 using CompucorVtas.Data;
 using CompucorVtas.Models;
 using Microsoft.EntityFrameworkCore;
+using CompucorVtas.DTOs;
 
 namespace CompucorVtas.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     public class ProductosController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -18,12 +19,22 @@ namespace CompucorVtas.Controllers
 
         // GET: api/productos
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Producto>>> Get()
+        public async Task<ActionResult<IEnumerable<ProductoDTO>>> Get()
+{
+    var productos = await _context.Productos
+        .Include(p => p.Categoria)
+        .Select(p => new ProductoDTO
         {
-            return await _context.Productos
-            .Include(p => p.Categoria)
-            .ToListAsync();
-        }
+            Id = p.Id,
+            Nombre = p.Nombre,
+            Precio = p.Precio,
+            Categoria = p.Categoria != null ? p.Categoria.Nombre : "(Sin categoría)"
+        })
+        .ToListAsync();
+
+    return productos;
+}
+
 
         // GET: api/productos/5
         [HttpGet("{id}")]
@@ -48,16 +59,39 @@ public async Task<ActionResult<IEnumerable<Producto>>> GetByCategoria(int catego
 }
 
         // POST: api/productos
-        [HttpPost]
-public async Task<ActionResult<Producto>> Post(Producto producto)
+[HttpPost]
+public async Task<ActionResult<ProductoDTO>> Post(ProductoCreateDTO dto)
 {
     if (!ModelState.IsValid)
         return BadRequest(ModelState);
 
+    var producto = new Producto
+    {
+        Nombre = dto.Nombre,
+        Descripcion = dto.Descripcion,
+        Precio = dto.Precio,
+        Stock = dto.Stock,
+        CategoriaId = dto.CategoriaId
+    };
+
     _context.Productos.Add(producto);
     await _context.SaveChangesAsync();
-    return CreatedAtAction(nameof(Get), new { id = producto.Id }, producto);
+
+    // Cargar la categoría (solo el nombre) para el DTO
+    var categoria = await _context.Categorias.FindAsync(dto.CategoriaId);
+
+    var productoDTO = new ProductoDTO
+    {
+        Id = producto.Id,
+        Nombre = producto.Nombre,
+        Precio = producto.Precio,
+        Categoria = categoria?.Nombre ?? "(Sin categoría)"
+    };
+
+    return CreatedAtAction(nameof(Get), new { id = producto.Id }, productoDTO);
 }
+
+
 
    [HttpPut("{id}")]
 public async Task<IActionResult> Put(int id, Producto producto)
