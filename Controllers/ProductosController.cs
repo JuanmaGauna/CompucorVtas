@@ -65,6 +65,11 @@ public async Task<ActionResult<ProductoDTO>> Post(ProductoCreateDTO dto)
     if (!ModelState.IsValid)
         return BadRequest(ModelState);
 
+    // Validar que la categoría exista
+    var categoria = await _context.Categorias.FindAsync(dto.CategoriaId);
+    if (categoria == null)
+        return BadRequest("La categoría especificada no existe.");
+
     var producto = new Producto
     {
         Nombre = dto.Nombre,
@@ -77,19 +82,17 @@ public async Task<ActionResult<ProductoDTO>> Post(ProductoCreateDTO dto)
     _context.Productos.Add(producto);
     await _context.SaveChangesAsync();
 
-    // Cargar la categoría (solo el nombre) para el DTO
-    var categoria = await _context.Categorias.FindAsync(dto.CategoriaId);
-
     var productoDTO = new ProductoDTO
     {
         Id = producto.Id,
         Nombre = producto.Nombre,
         Precio = producto.Precio,
-        Categoria = categoria?.Nombre ?? "(Sin categoría)"
+        Categoria = categoria.Nombre
     };
 
     return CreatedAtAction(nameof(Get), new { id = producto.Id }, productoDTO);
 }
+
 
 
 

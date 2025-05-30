@@ -33,6 +33,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddControllers();
+
 builder.Services.AddValidatorsFromAssemblyContaining<ProductoValidator>();
 
 var app = builder.Build();

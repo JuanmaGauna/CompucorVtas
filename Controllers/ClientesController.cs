@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
-using CompucorVtas.Models;
-using CompucorVtas.Data;
 using Microsoft.EntityFrameworkCore;
+using CompucorVtas.Data;
+using CompucorVtas.Models;
+using CompucorVtas.DTOs;
 
 namespace CompucorVtas.Controllers
 {
     [ApiController]
-    [Route("api/v1/[controller]")]
+    [Route("api/[controller]")]
     public class ClientesController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -16,57 +17,72 @@ namespace CompucorVtas.Controllers
             _context = context;
         }
 
+        // GET: api/clientes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cliente>>> Get()
+        public async Task<ActionResult<IEnumerable<ClienteDTO>>> Get()
         {
-            return await _context.Clientes.ToListAsync();
+            var clientes = await _context.Clientes
+                .Select(c => new ClienteDTO
+                {
+                    Id = c.Id,
+                    Nombre = c.Nombre,
+                    Email = c.Email,
+                    Telefono = c.Telefono
+                })
+                .ToListAsync();
+
+            return Ok(clientes);
         }
 
+        // GET: api/clientes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Cliente>> Get(int id)
+        public async Task<ActionResult<ClienteDTO>> Get(int id)
         {
             var cliente = await _context.Clientes.FindAsync(id);
-            if (cliente == null) return NotFound();
-            return cliente;
+
+            if (cliente == null)
+                return NotFound();
+
+            var dto = new ClienteDTO
+            {
+                Id = cliente.Id,
+                Nombre = cliente.Nombre,
+                Email = cliente.Email,
+                Telefono = cliente.Telefono
+            };
+
+            return Ok(dto);
         }
 
+        // POST: api/clientes
         [HttpPost]
-        public async Task<ActionResult<Cliente>> Post(Cliente cliente)
+        public async Task<ActionResult<ClienteDTO>> Post(ClienteCreateDTO dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            var cliente = new Cliente
+            {
+                Nombre = dto.Nombre,
+                Email = dto.Email,
+                Telefono = dto.Telefono
+            };
 
             _context.Clientes.Add(cliente);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(Get), new { id = cliente.Id }, cliente);
+
+            var clienteDTO = new ClienteDTO
+            {
+                Id = cliente.Id,
+                Nombre = cliente.Nombre,
+                Email = cliente.Email,
+                Telefono = cliente.Telefono
+            };
+
+            return CreatedAtAction(nameof(Get), new { id = cliente.Id }, clienteDTO);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, Cliente cliente)
-        {
-            if (id != cliente.Id)
-                return BadRequest("El ID no coincide.");
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            _context.Entry(cliente).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Clientes.Any(c => c.Id == id))
-                    return NotFound();
-                else
-                    throw;
-            }
-
-            return NoContent();
-        }
-
+        // DELETE: api/clientes/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -76,6 +92,7 @@ namespace CompucorVtas.Controllers
 
             _context.Clientes.Remove(cliente);
             await _context.SaveChangesAsync();
+
             return NoContent();
         }
     }
