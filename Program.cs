@@ -38,22 +38,24 @@ builder.Services.AddValidatorsFromAssemblyContaining<ProductoValidator>();
 
 var app = builder.Build();
 
+app.UseMiddleware<CompucorVtas.Middlewares.ExceptionMiddleware>();
+
 // Middleware de manejo de errores global
 app.UseErrorHandler();
 
-if (app.Environment.IsDevelopment())
-{
+
     app.UseSwagger();
 
     // 🔁 Cambiamos la ruta para evitar el cache roto de Swagger UI
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Compucor Ventas API v1");
-        c.RoutePrefix = "swagger-ui"; // Swagger se abrirá en /swagger-ui
+        c.RoutePrefix = "swagger"; // Swagger se abrirá en /swagger
     });
-}
+
 
 app.UseHttpsRedirection();
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

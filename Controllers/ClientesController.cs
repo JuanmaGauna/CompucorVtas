@@ -8,8 +8,14 @@ namespace CompucorVtas.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    
     public class ClientesController : ControllerBase
     {
+         [HttpGet("ping")]
+    public IActionResult Ping()
+    {
+        return Ok("Funciona");
+    }
         private readonly AppDbContext _context;
 
         public ClientesController(AppDbContext context)
