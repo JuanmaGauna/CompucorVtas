@@ -162,3 +162,5 @@
 /Users/owner/Documents/PROYECTOS/AdminVentas/obj/Debug/net8.0/AdmiVentas.pdb
 /Users/owner/Documents/PROYECTOS/AdminVentas/obj/Debug/net8.0/AdmiVentas.genruntimeconfig.cache
 /Users/owner/Documents/PROYECTOS/AdminVentas/obj/Debug/net8.0/ref/AdmiVentas.dll
+/Users/owner/Documents/PROYECTOS/AdminVentas/bin/Debug/net8.0/AdmiVentas.xml
+/Users/owner/Documents/PROYECTOS/AdminVentas/obj/Debug/net8.0/AdmiVentas.xml

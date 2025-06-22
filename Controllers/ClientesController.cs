@@ -32,8 +32,8 @@ namespace CompucorVtas.Controllers
                 {
                     Id = c.Id,
                     Nombre = c.Nombre,
-                    Email = c.Email,
-                    Telefono = c.Telefono
+                    Email = c.Email ?? string.Empty,
+                    Telefono = c.Telefono ?? string.Empty
                 })
                 .ToListAsync();
 
@@ -53,8 +53,8 @@ namespace CompucorVtas.Controllers
             {
                 Id = cliente.Id,
                 Nombre = cliente.Nombre,
-                Email = cliente.Email,
-                Telefono = cliente.Telefono
+                Email = cliente.Email ?? string.Empty,
+                Telefono = cliente.Telefono ?? string.Empty
             };
 
             return Ok(dto);
