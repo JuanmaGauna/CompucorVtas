@@ -1,19 +1,29 @@
 using CompucorVtas.Data;
-using Microsoft.EntityFrameworkCore;
-using FluentValidation.AspNetCore;
-using CompucorVtas.Validators;
-using FluentValidation;
 using CompucorVtas.Middlewares;
-using Swashbuckle.AspNetCore.Annotations;
+using CompucorVtas.Validators;
+using CompucorVtas.Services;
+using CompucorVtas.Mappings;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configurar Entity Framework + SQLite
+// Servicios de aplicación
+builder.Services.AddScoped<IProductoService, ProductoService>();
+
+// AutoMapper
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
+// FluentValidation
+builder.Services.AddValidatorsFromAssemblyContaining<ProductoValidator>();
+
+// Entity Framework + SQLite
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=compucorvtas.db"));
 
-// Configurar Swagger
+// Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -31,34 +41,30 @@ builder.Services.AddSwaggerGen(c =>
 
     c.EnableAnnotations();
 
-    // 📝 Comentarios XML
+    // Comentarios XML (asegurate de tener habilitado <GenerateDocumentationFile> en .csproj)
     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     c.IncludeXmlComments(xmlPath);
 });
 
+// Controllers
 builder.Services.AddControllers();
-
-builder.Services.AddValidatorsFromAssemblyContaining<ProductoValidator>();
 
 var app = builder.Build();
 
-app.UseMiddleware<CompucorVtas.Middlewares.ExceptionMiddleware>();
-
-// Middleware de manejo de errores global
+// Middleware global de errores
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseErrorHandler();
 
+// Swagger UI
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Compucor Ventas API v1");
+    c.RoutePrefix = "swagger";
+});
 
-    app.UseSwagger();
-
-    // 🔁 Cambiamos la ruta para evitar el cache roto de Swagger UI
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Compucor Ventas API v1");
-        c.RoutePrefix = "swagger"; // Swagger se abrirá en /swagger
-    });
-
-
+// Middleware estándar
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

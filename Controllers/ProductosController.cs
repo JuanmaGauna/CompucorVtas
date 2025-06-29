@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using CompucorVtas.Data;
-using CompucorVtas.Models;
-using Microsoft.EntityFrameworkCore;
 using CompucorVtas.DTOs;
+using CompucorVtas.Models;
+using CompucorVtas.Services;
+using AutoMapper;
 
 namespace CompucorVtas.Controllers
 {
@@ -10,131 +10,91 @@ namespace CompucorVtas.Controllers
     [Route("api/v1/[controller]")]
     public class ProductosController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IProductoService _productoService;
+        private readonly IMapper _mapper;
 
-        public ProductosController(AppDbContext context)
+        public ProductosController(IProductoService productoService, IMapper mapper)
         {
-            _context = context;
+            _productoService = productoService;
+            _mapper = mapper;
         }
 
-        // GET: api/productos
+        // GET: api/v1/productos
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductoDTO>>> Get()
-{
-    var productos = await _context.Productos
-        .Include(p => p.Categoria)
-        .Select(p => new ProductoDTO
         {
-            Id = p.Id,
-            Nombre = p.Nombre,
-            Precio = p.Precio,
-            Categoria = p.Categoria != null ? p.Categoria.Nombre : "(Sin categoría)"
-        })
-        .ToListAsync();
-
-    return productos;
-}
-
-
-        // GET: api/productos/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Producto>> Get(int id)
-        {
-            var producto = await _context.Productos.FindAsync(id);
-            if (producto == null) return NotFound();
-            return producto;
+            var productos = await _productoService.ObtenerTodos();
+            var dto = _mapper.Map<List<ProductoDTO>>(productos);
+            return Ok(dto);
         }
-[HttpGet("categoria/{categoriaId}")]
-public async Task<ActionResult<IEnumerable<Producto>>> GetByCategoria(int categoriaId)
-{
-    var productos = await _context.Productos
-        .Where(p => p.CategoriaId == categoriaId)
-        .Include(p => p.Categoria)
-        .ToListAsync();
 
-    if (productos == null || productos.Count == 0)
-        return NotFound($"No hay productos para la categoría {categoriaId}");
+        // GET: api/v1/productos/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ProductoDTO>> Get(int id)
+        {
+            var producto = await _productoService.ObtenerPorId(id);
+            if (producto == null) return NotFound();
 
-    return productos;
-}
+            var dto = _mapper.Map<ProductoDTO>(producto);
+            return Ok(dto);
+        }
 
-        // POST: api/productos
-[HttpPost]
-public async Task<ActionResult<ProductoDTO>> Post(ProductoCreateDTO dto)
-{
-    if (!ModelState.IsValid)
-        return BadRequest(ModelState);
+        // GET: api/v1/productos/categoria/3
+        [HttpGet("categoria/{categoriaId}")]
+        public async Task<ActionResult<IEnumerable<ProductoDTO>>> GetByCategoria(int categoriaId)
+        {
+            var productos = await _productoService.ObtenerTodos();
+            var filtrados = productos
+                .Where(p => p.CategoriaId == categoriaId)
+                .ToList();
 
-    // Validar que la categoría exista
-    var categoria = await _context.Categorias.FindAsync(dto.CategoriaId);
-    if (categoria == null)
-        return BadRequest("La categoría especificada no existe.");
+            if (!filtrados.Any())
+                return NotFound($"No hay productos para la categoría {categoriaId}");
 
-    var producto = new Producto
-    {
-        Nombre = dto.Nombre,
-        Descripcion = dto.Descripcion,
-        Precio = dto.Precio,
-        Stock = dto.Stock,
-        CategoriaId = dto.CategoriaId
-    };
+            var dto = _mapper.Map<List<ProductoDTO>>(filtrados);
+            return Ok(dto);
+        }
 
-    _context.Productos.Add(producto);
-    await _context.SaveChangesAsync();
+        // POST: api/v1/productos
+        [HttpPost]
+        public async Task<ActionResult<ProductoDTO>> Post(ProductoCreateDTO dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-    var productoDTO = new ProductoDTO
-    {
-        Id = producto.Id,
-        Nombre = producto.Nombre,
-        Precio = producto.Precio,
-        Categoria = categoria.Nombre
-    };
+            var nuevoProducto = _mapper.Map<Producto>(dto);
+            var productoCreado = await _productoService.Crear(nuevoProducto);
+            var dtoCreado = _mapper.Map<ProductoDTO>(productoCreado);
 
-    return CreatedAtAction(nameof(Get), new { id = producto.Id }, productoDTO);
-}
+            return CreatedAtAction(nameof(Get), new { id = dtoCreado.Id }, dtoCreado);
+        }
 
+        // PUT: api/v1/productos/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, Producto producto)
+        {
+            if (id != producto.Id)
+                return BadRequest("El ID no coincide.");
 
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
+            var actualizado = await _productoService.Actualizar(id, producto);
+            if (actualizado == null)
+                return NotFound();
 
-   [HttpPut("{id}")]
-public async Task<IActionResult> Put(int id, Producto producto)
-{
-    if (id != producto.Id)
-        return BadRequest("El ID no coincide.");
+            return NoContent();
+        }
 
-    if (!ModelState.IsValid)
-        return BadRequest(ModelState);
-
-    _context.Entry(producto).State = EntityState.Modified;
-
-    try
-    {
-        await _context.SaveChangesAsync();
-    }
-    catch (DbUpdateConcurrencyException)
-    {
-        if (!_context.Productos.Any(e => e.Id == id))
-            return NotFound();
-        else
-            throw;
-    }
-
-    return NoContent();
-}
-
-        // DELETE: api/productos/5
+        // DELETE: api/v1/productos/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var producto = await _context.Productos.FindAsync(id);
-            if (producto == null)
+            var eliminado = await _productoService.Eliminar(id);
+            if (!eliminado)
                 return NotFound();
-
-            _context.Productos.Remove(producto);
-            await _context.SaveChangesAsync();
 
             return NoContent();
         }
     }
 }
-
