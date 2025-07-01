@@ -9,9 +9,11 @@ namespace CompucorVtas.Mappings
         public AutoMapperProfile()
         {
             CreateMap<Producto, ProductoDTO>()
-                .ForMember(dest => dest.Categoria, opt => opt.MapFrom(src => src.Categoria != null ? src.Categoria.Nombre : "(Sin categoría)"));
+                .ForMember(dest => dest.CategoriaNombre, opt => opt.MapFrom(src => src.Categoria!.Nombre))
+                .ForMember(dest => dest.CategoriaId, opt => opt.MapFrom(src => src.CategoriaId));
 
             CreateMap<ProductoCreateDTO, Producto>();
         }
     }
 }
+

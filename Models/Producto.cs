@@ -18,8 +18,10 @@ namespace CompucorVtas.Models
 
         [Range(0, int.MaxValue, ErrorMessage = "El stock no puede ser negativo")]
         public int Stock { get; set; }
-        public int CategoriaId { get; set; }
-        public Categoria? Categoria { get; set; }
 
+        [Required(ErrorMessage = "La categoría es obligatoria")]
+        public int CategoriaId { get; set; }
+
+        public Categoria? Categoria { get; set; } // navegación
     }
 }

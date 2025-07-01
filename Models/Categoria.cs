@@ -14,6 +14,6 @@ namespace CompucorVtas.Models
         public string? Descripcion { get; set; }
 
         // Relación: una categoría tiene muchos productos
-        public ICollection<Producto>? Productos { get; set; }
+        public List<Producto> Productos { get; set; } = new();
     }
 }

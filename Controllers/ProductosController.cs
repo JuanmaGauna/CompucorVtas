@@ -23,7 +23,7 @@ namespace CompucorVtas.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductoDTO>>> Get()
         {
-            var productos = await _productoService.ObtenerTodos();
+            var productos = await _productoService.ObtenerTodosIncluyendoCategoria();
             var dto = _mapper.Map<List<ProductoDTO>>(productos);
             return Ok(dto);
         }
@@ -32,7 +32,7 @@ namespace CompucorVtas.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductoDTO>> Get(int id)
         {
-            var producto = await _productoService.ObtenerPorId(id);
+            var producto = await _productoService.ObtenerPorIdIncluyendoCategoria(id);
             if (producto == null) return NotFound();
 
             var dto = _mapper.Map<ProductoDTO>(producto);
@@ -43,15 +43,12 @@ namespace CompucorVtas.Controllers
         [HttpGet("categoria/{categoriaId}")]
         public async Task<ActionResult<IEnumerable<ProductoDTO>>> GetByCategoria(int categoriaId)
         {
-            var productos = await _productoService.ObtenerTodos();
-            var filtrados = productos
-                .Where(p => p.CategoriaId == categoriaId)
-                .ToList();
+            var productos = await _productoService.ObtenerPorCategoriaIncluyendoCategoria(categoriaId);
 
-            if (!filtrados.Any())
+            if (productos == null || !productos.Any())
                 return NotFound($"No hay productos para la categoría {categoriaId}");
 
-            var dto = _mapper.Map<List<ProductoDTO>>(filtrados);
+            var dto = _mapper.Map<List<ProductoDTO>>(productos);
             return Ok(dto);
         }
 
@@ -62,29 +59,47 @@ namespace CompucorVtas.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            var categoriaExiste = await _productoService.CategoriaExiste(dto.CategoriaId);
+            if (!categoriaExiste)
+                return BadRequest($"No existe una categoría con ID {dto.CategoriaId}");
+
             var nuevoProducto = _mapper.Map<Producto>(dto);
             var productoCreado = await _productoService.Crear(nuevoProducto);
-            var dtoCreado = _mapper.Map<ProductoDTO>(productoCreado);
+
+            var productoConCategoria = await _productoService.ObtenerPorIdIncluyendoCategoria(productoCreado.Id);
+            var dtoCreado = _mapper.Map<ProductoDTO>(productoConCategoria);
 
             return CreatedAtAction(nameof(Get), new { id = dtoCreado.Id }, dtoCreado);
         }
 
         // PUT: api/v1/productos/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, Producto producto)
-        {
-            if (id != producto.Id)
-                return BadRequest("El ID no coincide.");
+public async Task<IActionResult> Put(int id, ProductoCreateDTO dto)
+{
+    if (!ModelState.IsValid)
+        return BadRequest(ModelState);
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+    // No existe dto.Id, entonces no tiene sentido comparar
+    // Podés quitar esa validación o usar un DTO con Id para Update
 
-            var actualizado = await _productoService.Actualizar(id, producto);
-            if (actualizado == null)
-                return NotFound();
+    var categoriaExiste = await _productoService.CategoriaExiste(dto.CategoriaId);
+    if (!categoriaExiste)
+        return BadRequest($"No existe una categoría con ID {dto.CategoriaId}");
 
-            return NoContent();
-        }
+    var productoExistente = await _productoService.ObtenerPorId(id);
+    if (productoExistente == null)
+        return NotFound();
+
+    var productoActualizado = _mapper.Map<Producto>(dto);
+    productoActualizado.Id = id; // aseguramos el Id correcto
+
+    var actualizado = await _productoService.Actualizar(id, productoActualizado);
+    if (actualizado == null)
+        return NotFound();
+
+    return NoContent();
+}
+
 
         // DELETE: api/v1/productos/5
         [HttpDelete("{id}")]
