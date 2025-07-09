@@ -41,7 +41,7 @@ builder.Services.AddSwaggerGen(c =>
 
     c.EnableAnnotations();
 
-    // Comentarios XML (asegurate de tener habilitado <GenerateDocumentationFile> en .csproj)
+    // Comentarios XML
     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     c.IncludeXmlComments(xmlPath);
@@ -50,7 +50,19 @@ builder.Services.AddSwaggerGen(c =>
 // Controllers
 builder.Services.AddControllers();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
+
+app.UseCors("AllowFrontend");
 
 // Middleware global de errores
 app.UseMiddleware<ExceptionMiddleware>();
