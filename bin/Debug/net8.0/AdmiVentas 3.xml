@@ -40,29 +40,5 @@
         <member name="M:AdmiVentas.Migrations.AgregarTablaVentas.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
-        <member name="T:AdmiVentas.Migrations.CrearVentaConFKCliente">
-            <inheritdoc />
-        </member>
-        <member name="M:AdmiVentas.Migrations.CrearVentaConFKCliente.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:AdmiVentas.Migrations.CrearVentaConFKCliente.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:AdmiVentas.Migrations.CrearVentaConFKCliente.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:AdmiVentas.Migrations.Init">
-            <inheritdoc />
-        </member>
-        <member name="M:AdmiVentas.Migrations.Init.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:AdmiVentas.Migrations.Init.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:AdmiVentas.Migrations.Init.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
     </members>
 </doc>

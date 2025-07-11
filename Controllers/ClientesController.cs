@@ -7,7 +7,8 @@ using CompucorVtas.DTOs;
 namespace CompucorVtas.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
+
     
     public class ClientesController : ControllerBase
     {

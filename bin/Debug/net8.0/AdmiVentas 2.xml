@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AdmiVentas</name>
+    </assembly>
+    <members>
+        <member name="T:AdmiVentas.Migrations.Initial">
+            <inheritdoc />
+        </member>
+        <member name="M:AdmiVentas.Migrations.Initial.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AdmiVentas.Migrations.Initial.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AdmiVentas.Migrations.Initial.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AdmiVentas.Migrations.AgregarRelacionProductoCategoria">
+            <inheritdoc />
+        </member>
+        <member name="M:AdmiVentas.Migrations.AgregarRelacionProductoCategoria.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AdmiVentas.Migrations.AgregarRelacionProductoCategoria.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AdmiVentas.Migrations.AgregarRelacionProductoCategoria.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

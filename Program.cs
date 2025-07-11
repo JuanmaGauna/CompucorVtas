@@ -8,8 +8,11 @@ using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
+
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddScoped<IVentaService, VentaService>();
 // Servicios de aplicación
 builder.Services.AddScoped<IProductoService, ProductoService>();
 
