@@ -17,7 +17,9 @@ namespace CompucorVtas.Services
 
         public async Task<List<Venta>> ObtenerTodos()
         {
-            return await _context.Ventas.ToListAsync();
+            return await _context.Ventas
+                .Include(v => v.Cliente)
+                .ToListAsync();
         }
 
         public async Task<Venta?> ObtenerPorId(int id)
@@ -28,8 +30,19 @@ namespace CompucorVtas.Services
         public async Task<Venta> Crear(Venta venta)
         {
             _context.Ventas.Add(venta);
-            await _context.SaveChangesAsync();
-            return venta;
+    await _context.SaveChangesAsync();
+
+   
+    var result = await _context.Ventas
+        .Include(v => v.Cliente)
+        .FirstOrDefaultAsync(v => v.Id == venta.Id);
+
+    if (result == null)
+    {
+        throw new InvalidOperationException($"Venta con Id {venta.Id} no encontrada.");
+    }
+
+    return result;
         }
 
         public async Task<Venta?> Actualizar(int id, Venta venta)

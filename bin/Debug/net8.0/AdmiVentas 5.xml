@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AdmiVentas</name>
+    </assembly>
+    <members>
+        <member name="T:AdmiVentas.Migrations.Initial">
+            <inheritdoc />
+        </member>
+        <member name="M:AdmiVentas.Migrations.Initial.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AdmiVentas.Migrations.Initial.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AdmiVentas.Migrations.Initial.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AdmiVentas.Migrations.AgregarRelacionProductoCategoria">
+            <inheritdoc />
+        </member>
+        <member name="M:AdmiVentas.Migrations.AgregarRelacionProductoCategoria.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AdmiVentas.Migrations.AgregarRelacionProductoCategoria.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AdmiVentas.Migrations.AgregarRelacionProductoCategoria.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AdmiVentas.Migrations.AgregarTablaVentas">
+            <inheritdoc />
+        </member>
+        <member name="M:AdmiVentas.Migrations.AgregarTablaVentas.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AdmiVentas.Migrations.AgregarTablaVentas.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AdmiVentas.Migrations.AgregarTablaVentas.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AdmiVentas.Migrations.CrearVentaConFKCliente">
+            <inheritdoc />
+        </member>
+        <member name="M:AdmiVentas.Migrations.CrearVentaConFKCliente.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AdmiVentas.Migrations.CrearVentaConFKCliente.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AdmiVentas.Migrations.CrearVentaConFKCliente.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AdmiVentas.Migrations.Init">
+            <inheritdoc />
+        </member>
+        <member name="M:AdmiVentas.Migrations.Init.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AdmiVentas.Migrations.Init.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AdmiVentas.Migrations.Init.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

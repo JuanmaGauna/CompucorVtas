@@ -10,16 +10,14 @@ namespace CompucorVtas.Mappings
         {
             CreateMap<Producto, ProductoDTO>()
                 .ForMember(dest => dest.CategoriaNombre, opt => opt.MapFrom(src => src.Categoria!.Nombre))
-                .ForMember(dest => dest.CategoriaId, opt => opt.MapFrom(src => src.CategoriaId));
+                .ForMember(dest => dest.CategoriaId, opt => opt.MapFrom(src => src.CategoriaId))
+                .ForMember(dest => dest.Stock, opt => opt.MapFrom(src => src.Stock));
 
             CreateMap<Venta, VentaDTO>()
                 .ForMember(dest => dest.ClienteNombre, opt => opt.MapFrom(src => src.Cliente!.Nombre));
 
             CreateMap<ProductoCreateDTO, Producto>();
             CreateMap<VentaCreateDTO, Venta>();
-            CreateMap<Venta, VentaDTO>()
-    .ForMember(dest => dest.ClienteNombre, opt => opt.MapFrom(src => src.Cliente.Nombre));
-
         }
     }
 }

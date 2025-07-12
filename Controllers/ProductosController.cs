@@ -79,9 +79,6 @@ public async Task<IActionResult> Put(int id, ProductoCreateDTO dto)
     if (!ModelState.IsValid)
         return BadRequest(ModelState);
 
-    // No existe dto.Id, entonces no tiene sentido comparar
-    // Podés quitar esa validación o usar un DTO con Id para Update
-
     var categoriaExiste = await _productoService.CategoriaExiste(dto.CategoriaId);
     if (!categoriaExiste)
         return BadRequest($"No existe una categoría con ID {dto.CategoriaId}");

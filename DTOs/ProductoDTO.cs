@@ -8,5 +8,7 @@ namespace CompucorVtas.DTOs
 
         public int CategoriaId { get; set; }
         public string CategoriaNombre { get; set; } = string.Empty;
+
+        public int Stock { get; set; }
     }
 }
